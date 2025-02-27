@@ -39,14 +39,15 @@ public class WebSecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfig.setAllowedOrigins(List.of("*")); // Allow all origins
+                    corsConfig.setAllowedOrigins(List.of("*")); // Allow all origins (use specific domains if credentials=true)
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                    corsConfig.setAllowedHeaders(List.of("*")); // Allow all headers
                     corsConfig.setExposedHeaders(List.of("Authorization"));
-                    corsConfig.setAllowCredentials(true);
+                    corsConfig.setAllowCredentials(false); // MUST be false if using "*"
                     corsConfig.setMaxAge(3600L);
                     return corsConfig;
                 }))
+
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.OPTIONS).permitAll() // Allow OPTIONS requests
                         .requestMatchers("/api/auth/**").permitAll()
